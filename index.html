@@ -1,284 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>TaskFlow — Канбан</title>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мой Канбан</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
-    :root{--bg:#0b1020;--panel:#17213a;--card:#202d49;--line:#334155;--text:#f8fafc;--muted:#94a3b8;--accent:#7c3aed}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font-family:Arial,sans-serif;background:radial-gradient(circle at top left,#44208a55,transparent 34%),var(--bg)}
-    .app{max-width:1500px;margin:auto;padding:28px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.top h1{margin:0}.top p{color:var(--muted)}
-    button,input,textarea,select{font:inherit}.primary,.secondary,.icon{border:0;border-radius:10px;cursor:pointer}.primary{padding:12px 16px;background:var(--accent);color:#fff;font-weight:bold}.secondary{padding:10px 14px;background:#24314c;color:#e2e8f0;border:1px solid var(--line)}
-    .board{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:18px}.column{min-height:520px;border:1px solid var(--line);border-radius:18px;background:#17213add;overflow:hidden}.column.drag{border-color:#a78bfa;background:#31205a}
-    .column-head{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--line);font-weight:bold}.count{padding:3px 8px;border-radius:999px;background:#0f172a;color:var(--muted);font-size:12px}.list{min-height:450px;padding:12px}
-    .card{margin-bottom:12px;border:1px solid #3b4a67;border-radius:14px;background:var(--card);overflow:hidden;transition:.15s}.card:hover{transform:translateY(-2px);border-color:#a78bfa}.card.dragging{opacity:.45}.card.inactive{opacity:.6}.body{padding:14px}.card h3{margin:0 0 7px;font-size:16px}.desc{margin:0;color:var(--muted);font-size:13px;line-height:1.45;white-space:pre-wrap}
-    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.tag{padding:4px 7px;border-radius:999px;font-size:11px;font-weight:bold}.ok{background:#14532d;color:#bbf7d0}.off{background:#334155;color:#cbd5e1}.date{background:#1e3a8a;color:#bfdbfe}.soon{background:#78350f;color:#fde68a}.late{background:#7f1d1d;color:#fecaca}
-    .foot{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-top:1px solid #3b4a67}.comment-btn{border:0;background:transparent;color:#c4b5fd;cursor:pointer}.actions{display:flex;gap:5px}.icon{width:29px;height:29px;background:transparent;color:var(--muted)}.icon:hover{background:#334155;color:#fff}.empty{padding:55px 10px;text-align:center;color:#64748b}
-    .modal{display:none;position:fixed;inset:0;z-index:5;align-items:center;justify-content:center;padding:16px;background:#020617bb}.modal.open{display:flex}.box{width:100%;max-width:580px;max-height:90vh;overflow:auto;border:1px solid #475569;border-radius:18px;background:#17213a}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0}
-    form,.comments{padding:18px}label{display:block;margin-bottom:13px;font-size:13px;font-weight:bold;color:#dbeafe}input,textarea,select{display:block;width:100%;margin-top:6px;padding:10px;color:#fff;border:1px solid #475569;border-radius:8px;background:#0f172a}textarea{min-height:92px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:13px}.toggle{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #475569;border-radius:8px}.toggle input{width:auto;margin:0}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
-    .comment{padding:11px;margin-bottom:9px;border:1px solid #3b4a67;border-radius:10px;background:#0f172a}.comment p{margin:0;white-space:pre-wrap}.comment time{display:block;margin-top:7px;color:#64748b;font-size:11px}.notice{position:fixed;right:20px;bottom:20px;z-index:10;max-width:320px;padding:12px 14px;border-radius:10px;background:#2e1065;transform:translateY(150%);transition:.2s}.notice.show{transform:none}
-    @media(max-width:900px){.board{overflow:auto;grid-template-columns:repeat(3,280px)}}@media(max-width:600px){.app{padding:16px}.top{align-items:flex-start;flex-direction:column}.primary{width:100%}.row{grid-template-columns:1fr}}
+    :root { --ink:#172033; --muted:#70809b; --line:#e8edf5; --bg:#f5f7fb; --card:#fff; --violet:#6857e8; --blue:#3677ed; --green:#21a778; --danger:#e95a6a; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(circle at 5% 0%,#eae8ff 0,transparent 28rem),radial-gradient(circle at 95% 8%,#dff4ff 0,transparent 27rem),var(--bg); font-family:Manrope,Arial,sans-serif; }
+    button,input,textarea { font:inherit; }
+    button { cursor:pointer; border:0; }
+    .app { max-width:1500px; margin:auto; padding:34px clamp(16px,4vw,56px) 48px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:30px; }
+    h1 { margin:0; font-size:clamp(26px,4vw,38px); letter-spacing:-1.6px; } .subtitle { color:var(--muted); margin:7px 0 0; font-size:14px; }
+    .add-btn { padding:13px 18px; background:linear-gradient(135deg,var(--violet),#8c59ef); color:white; border-radius:13px; font-weight:800; box-shadow:0 10px 20px #7259e644; transition:.2s; } .add-btn:hover { transform:translateY(-2px); box-shadow:0 14px 24px #7259e655; }
+    .summary { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:26px; } .metric { background:#ffffffa8; border:1px solid #fff; border-radius:16px; padding:14px 18px; box-shadow:0 7px 20px #182c5210; } .metric b { display:block; font-size:22px; } .metric span { color:var(--muted); font-size:12px; }
+    .board { display:grid; grid-template-columns:repeat(3,minmax(270px,1fr)); gap:20px; overflow-x:auto; padding-bottom:6px; }
+    .column { min-height:460px; background:#eef1f7a8; border:1px solid #e4e9f2; border-radius:20px; padding:15px; transition:.2s; } .column.over { outline:2px dashed var(--violet); background:#e8e5ffb8; }
+    .column-head { display:flex; justify-content:space-between; align-items:center; margin:2px 3px 15px; } .column-title { display:flex; align-items:center; gap:9px; font-weight:800; font-size:15px; } .dot { width:9px;height:9px;border-radius:50%;background:var(--blue); } .in-progress .dot { background:#f4a940; }.done .dot {background:var(--green)} .count { font-size:12px; color:var(--muted); background:white; padding:4px 9px; border-radius:999px; }
+    .cards { display:grid; gap:12px; min-height:390px; } .task { background:var(--card); border:1px solid #edf0f6; border-radius:15px; padding:16px; box-shadow:0 5px 14px #21395d11; transition:transform .2s,box-shadow .2s,opacity .2s; } .task:hover { transform:translateY(-2px); box-shadow:0 10px 22px #21395d1c; } .task.dragging{opacity:.45;transform:rotate(2deg)} .task.inactive { opacity:.58; filter:saturate(.6); }
+    .task-top { display:flex; align-items:flex-start; gap:10px; justify-content:space-between; } .task h3 { font-size:15px; line-height:1.4; margin:0; overflow-wrap:anywhere; } .task p { color:var(--muted); margin:10px 0 13px; font-size:12px; line-height:1.55; white-space:pre-wrap; }
+    .icon-btn { color:#92a0b8;background:#f5f7fb;border-radius:8px;width:28px;height:28px;font-size:17px;line-height:1;flex:0 0 auto; } .icon-btn:hover { color:var(--danger);background:#fff0f2; }
+    .labels { display:flex; flex-wrap:wrap; gap:7px; align-items:center; } .pill { display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:5px 8px;border-radius:7px; } .active {color:#167d5a;background:#e3f8ef}.inactive {color:#8490a5;background:#edf0f5}.deadline {color:#5e69a0;background:#eef0ff}.overdue {color:#c64454;background:#ffeaed}.soon {color:#9a6810;background:#fff4d9}
+    .task-actions { border-top:1px solid var(--line); margin-top:14px; padding-top:12px; display:flex; justify-content:space-between; align-items:center; } .move { display:flex; gap:5px; } .move button { width:29px;height:27px;border-radius:7px;background:#f2f4f8;color:#61708a;font-weight:bold; } .move button:hover {background:#e4e7ff;color:var(--violet)} .move button:disabled {opacity:.3;cursor:default}
+    .comment-box { margin-top:13px; border-top:1px solid var(--line); padding-top:12px; } .comments { display:grid;gap:7px;max-height:110px;overflow:auto; } .comment { font-size:11px;line-height:1.45;background:#f7f8fb;color:#53617a;padding:7px 8px;border-radius:7px;white-space:pre-wrap; } .comment-form {display:flex;gap:7px;margin-top:8px}.comment-form input { width:100%;border:1px solid #dfe5ef;border-radius:7px;padding:7px 8px;font-size:11px;outline:none; }.comment-form input:focus {border-color:var(--violet)} .comment-form button {background:#e9e6ff;color:var(--violet);border-radius:7px;width:31px;font-weight:800}
+    dialog { border:0; padding:0; max-width:min(500px,calc(100vw - 28px)); border-radius:20px; box-shadow:0 30px 90px #16233d55; } dialog::backdrop { background:#17203380; backdrop-filter:blur(3px); } .modal {padding:26px;} .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal h2{font-size:20px;margin:0}.form-grid{display:grid;gap:14px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:800;color:#526079}.field input,.field textarea{border:1px solid #dce3ee;border-radius:10px;padding:11px 12px;outline:none;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--violet);box-shadow:0 0 0 3px #6857e817}.toggle { display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;cursor:pointer }.toggle input {accent-color:var(--green);width:16px;height:16px}.form-actions {display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.cancel{background:#f0f2f6;color:#66748b;padding:10px 14px;border-radius:9px;font-weight:700}.save{background:var(--violet);color:#fff;padding:10px 16px;border-radius:9px;font-weight:800}.empty { text-align:center;color:#93a0b4;font-size:12px;padding:42px 12px; }
+    .toast{position:fixed;right:22px;bottom:22px;background:#1d2b43;color:#fff;padding:12px 16px;border-radius:11px;box-shadow:0 12px 30px #17203344;font-size:13px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s}.toast.show{opacity:1;transform:none}
+
+    /* Ночной город: звёзды, неоновое свечение и эффект матового стекла. */
+    :root { --ink:#edf3ff; --muted:#a9b7d3; --line:#ffffff1f; --bg:#071025; --card:#142242c7; --violet:#a77cff; --blue:#47c9ff; --green:#47e0a7; --danger:#ff7791; }
+    body { background:radial-gradient(circle at 16% 4%,#5943b855 0,transparent 24rem),radial-gradient(circle at 85% 10%,#0a91c755 0,transparent 25rem),linear-gradient(145deg,#071025 0%,#101a3c 54%,#07152a 100%); overflow-x:hidden; }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.72; background-image:radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#8de9ff 1px,transparent 1.5px); background-size:97px 89px,149px 131px; background-position:8px 12px,38px 61px; }
+    body::after { content:""; position:fixed; left:0; bottom:0; width:100%; height:174px; pointer-events:none; z-index:-1; opacity:.72; background:#050b19; clip-path:polygon(0 35%,4% 35%,4% 10%,7% 10%,7% 45%,12% 45%,12% 20%,17% 20%,17% 37%,24% 37%,24% 0,30% 0,30% 47%,36% 47%,36% 16%,42% 16%,42% 40%,48% 40%,48% 5%,56% 5%,56% 30%,63% 30%,63% 12%,69% 12%,69% 42%,75% 42%,75% 0,83% 0,83% 36%,89% 36%,89% 18%,96% 18%,96% 45%,100% 45%,100% 100%,0 100%); }
+    h1 { text-shadow:0 0 24px #9f7dff83; } .add-btn { background:linear-gradient(135deg,var(--violet),#3aabf4); box-shadow:0 0 25px #8072ff73; } .add-btn:hover { box-shadow:0 0 35px #56cfff9a; }
+    .metric { background:#ffffff0c; border-color:#ffffff22; backdrop-filter:blur(14px); box-shadow:0 7px 20px #0207113d; }
+    .column { background:#09152e9e; border-color:#ffffff1c; backdrop-filter:blur(15px); box-shadow:inset 0 1px #ffffff13,0 16px 35px #02071336; } .column.over { background:#32266a80; }
+    .dot { box-shadow:0 0 10px var(--blue); }.in-progress .dot { box-shadow:0 0 10px #f4a940; }.done .dot { box-shadow:0 0 10px var(--green); }.count { color:#c5d1e8; background:#ffffff12; border:1px solid #ffffff16; }
+    .task { background:linear-gradient(145deg,#ffffff18,#ffffff0b); border-color:#ffffff20; backdrop-filter:blur(12px); box-shadow:0 5px 14px #02071342; } .task:hover { border-color:#a583ff75; box-shadow:0 10px 26px #02071360,0 0 18px #825bff21; }
+    .icon-btn { color:#b4c3df; background:#ffffff12; }.icon-btn:hover { background:#ff779121; }.active {color:#66f0bb;background:#1f9f7450}.inactive {color:#b1bbce;background:#ffffff13}.deadline {color:#aeb5ff;background:#7478fa2e}.overdue {color:#ff9baa;background:#ff587038}.soon {color:#ffda87;background:#d994203b}
+    .move button { background:#ffffff12;color:#b7c5e0; }.move button:hover {background:#806bff4d;color:#fff}.comment {background:#ffffff0d;color:#c0cce1}.comment-form input {background:#07112780;color:#e9efff;border-color:#ffffff23}.comment-form button {background:#876cff42;color:#d9cfff}
+    dialog { color:var(--ink); background:#101d38f2; border:1px solid #ffffff28; box-shadow:0 30px 90px #020713cc; } dialog::backdrop { background:#02071496; backdrop-filter:blur(6px); }.field label {color:#bdc9df}.field input,.field textarea {color:#edf3ff;background:#071127a0;border-color:#ffffff24}.cancel {background:#ffffff13;color:#c3cde1}.save {background:linear-gradient(135deg,var(--violet),#3aabf4)}.empty {color:#91a4c4}.toast {background:#182949;border:1px solid #ffffff20;box-shadow:0 12px 30px #02071388}
+    @media(max-width:760px){header{align-items:flex-start;flex-direction:column}.add-btn{width:100%}.summary{grid-template-columns:repeat(3,1fr)}.metric{padding:11px}.board{grid-template-columns:repeat(3,minmax(285px,1fr))}.app{padding-top:24px}}
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="top">
-      <div><h1>Мои задачи</h1><p>Личный Канбан-дашборд с дедлайнами и заметками.</p></div>
-      <button id="newTask" class="primary">+ Новая задача</button>
-    </header>
-    <section class="board">
-      <section class="column" data-status="todo"><div class="column-head">К выполнению <span id="todoCount" class="count">0</span></div><div id="todo" class="list"></div></section>
-      <section class="column" data-status="progress"><div class="column-head">В процессе <span id="progressCount" class="count">0</span></div><div id="progress" class="list"></div></section>
-      <section class="column" data-status="done"><div class="column-head">Завершено <span id="doneCount" class="count">0</span></div><div id="done" class="list"></div></section>
+    <header><div><h1>Мой фокус</h1><p class="subtitle">Организуйте день, сохраняйте темп и отмечайте победы.</p></div><button class="add-btn" id="openModal">+ Новая задача</button></header>
+    <section class="summary"><div class="metric"><b id="allCount">0</b><span>всего задач</span></div><div class="metric"><b id="progressCount">0</b><span>в работе</span></div><div class="metric"><b id="doneCount">0</b><span>завершено</span></div></section>
+    <section class="board" id="board">
+      <article class="column todo" data-status="todo"><div class="column-head"><div class="column-title"><i class="dot"></i>К выполнению</div><span class="count">0</span></div><div class="cards"></div></article>
+      <article class="column in-progress" data-status="progress"><div class="column-head"><div class="column-title"><i class="dot"></i>В процессе</div><span class="count">0</span></div><div class="cards"></div></article>
+      <article class="column done" data-status="done"><div class="column-head"><div class="column-title"><i class="dot"></i>Завершено</div><span class="count">0</span></div><div class="cards"></div></article>
     </section>
   </main>
-
-  <div id="taskModal" class="modal">
-    <div class="box">
-      <div class="modal-head"><h2 id="taskTitleModal">Новая задача</h2><button class="icon" data-close="taskModal">✕</button></div>
-      <form id="taskForm">
-        <input id="id" type="hidden">
-        <label>Название<input id="title" required maxlength="120"></label>
-        <label>Описание<textarea id="description" maxlength="1500"></textarea></label>
-        <div class="row">
-          <label>Дедлайн<input id="dueDate" type="date"></label>
-          <label>Статус<select id="status"><option value="todo">К выполнению</option><option value="progress">В процессе</option><option value="done">Завершено</option></select></label>
-        </div>
-        <label class="toggle"><input id="active" type="checkbox" checked> Актуально — отправлять уведомления</label>
-        <div class="form-actions"><button type="button" class="secondary" data-close="taskModal">Отмена</button><button class="primary">Сохранить</button></div>
-      </form>
-    </div>
-  </div>
-
-  <div id="commentsModal" class="modal">
-    <div class="box">
-      <div class="modal-head"><h2 id="commentsTitle">Заметки</h2><button class="icon" data-close="commentsModal">✕</button></div>
-      <div class="comments">
-        <div id="commentList"></div>
-        <form id="commentForm">
-          <label>Новая заметка<textarea id="commentText" required maxlength="1000"></textarea></label>
-          <div class="form-actions"><button class="primary">Добавить заметку</button></div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div id="notice" class="notice"></div>
-
+  <dialog id="taskDialog"><form class="modal" id="taskForm"><div class="modal-head"><h2>Новая задача</h2><button type="button" class="icon-btn" id="closeModal">×</button></div><div class="form-grid"><div class="field"><label for="title">Название *</label><input id="title" required maxlength="100" placeholder="Например, подготовить презентацию" /></div><div class="field"><label for="description">Описание</label><textarea id="description" rows="3" maxlength="600" placeholder="Детали задачи..."></textarea></div><div class="field"><label for="deadline">Срок выполнения</label><input id="deadline" type="date" /></div><label class="toggle"><input id="isActive" type="checkbox" checked /> <span>Задача актуальна</span></label></div><div class="form-actions"><button type="button" class="cancel" id="cancelModal">Отмена</button><button class="save" type="submit">Создать задачу</button></div></form></dialog>
+  <div class="toast" id="toast"></div>
   <script>
-    const KEY = "taskflow-kanban-v1";
-    // Вставьте реальные значения из панели EmailJS.
-    const PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
-    const SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
-    const TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
-    const RECIPIENT = "aruzhan.shamshaeva@gmail.com";
-
-    let state = loadState(), commentsId = null, draggedId = null;
-    const columns = {todo:["todo","todoCount","Нет задач к выполнению"],progress:["progress","progressCount","Нет задач в процессе"],done:["done","doneCount","Нет завершённых задач"]};
-
-    function loadState() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(KEY));
-        if (saved?.tasks) {
-          saved.tasks.forEach(t => {
-            t.comments = Array.isArray(t.comments) ? t.comments : [];
-            t.notifications = t.notifications || {};
-            t.active = t.active !== false;
-            if (!columns[t.status]) t.status = "todo";
-          });
-          return saved;
-        }
-      } catch (_) {}
-      return {tasks: []};
+    // EmailJS: зарегистрируйтесь на https://www.emailjs.com/ и вставьте свои ключи ниже.
+    // В шаблоне EmailJS используйте переменные: {{to_email}}, {{task_title}}, {{deadline}}, {{days_left}}.
+    const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+    const EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+    const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+    const REMINDER_EMAIL = 'aruzhan.shamshaeva@gmail.com';
+    const STORAGE_KEY = 'my-focus-kanban-tasks-v1';
+    let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let draggedId = null;
+    const $ = s => document.querySelector(s);
+    const escapeHtml = value => String(value || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const save = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    function dateInfo(date) { if (!date) return null; const today = new Date(); today.setHours(0,0,0,0); const end = new Date(date + 'T00:00:00'); const days = Math.round((end-today)/86400000); return { days, text:end.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}) }; }
+    function deadlineLabel(task) { const d=dateInfo(task.deadline); if(!d) return ''; let cls='deadline'; let prefix='до '; if(task.status!=='done' && d.days<0){cls='overdue';prefix='просрочено ';} else if(task.status!=='done' && d.days<=2){cls='soon';prefix=d.days===0?'сегодня':d.days===1?'завтра':'через 2 дня';} else prefix='до '; return `<span class="pill ${cls}">◷ ${prefix}${(d.days>2||task.status==='done')?d.text:''}</span>`; }
+    function render(){
+      document.querySelectorAll('.column').forEach(col=>{const status=col.dataset.status;const list=tasks.filter(t=>t.status===status);col.querySelector('.count').textContent=list.length;const cards=col.querySelector('.cards');cards.innerHTML=list.length?list.map(taskCard).join(''):'<div class="empty">Перетащите сюда задачу<br>или создайте новую</div>';});
+      $('#allCount').textContent=tasks.length; $('#progressCount').textContent=tasks.filter(t=>t.status==='progress').length; $('#doneCount').textContent=tasks.filter(t=>t.status==='done').length;
+      bindCardEvents();
     }
-
-    function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
-    function uid() { return crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random(); }
-    function task(id) { return state.tasks.find(t => t.id === id); }
-    function escapeHtml(value = "") { const d = document.createElement("div"); d.textContent = value; return d.innerHTML; }
-
-    function daysLeft(date) {
-      const due = new Date(date + "T00:00:00");
-      const today = new Date(); today.setHours(0,0,0,0);
-      return Math.round((due - today) / 86400000);
+    function taskCard(t){ const i=['todo','progress','done'].indexOf(t.status); const comments=t.comments||[]; return `<div class="task ${t.active?'':'inactive'}" draggable="true" data-id="${t.id}"><div class="task-top"><h3>${escapeHtml(t.title)}</h3><button class="icon-btn delete" title="Удалить задачу">×</button></div>${t.description?`<p>${escapeHtml(t.description)}</p>`:''}<div class="labels"><span class="pill ${t.active?'active':'inactive'}">${t.active?'● Актуально':'○ Неактуально'}</span>${deadlineLabel(t)}</div><div class="task-actions"><button class="icon-btn toggle-active" title="Изменить актуальность">${t.active?'◉':'○'}</button><div class="move"><button class="prev" ${i===0?'disabled':''} title="Переместить влево">←</button><button class="next" ${i===2?'disabled':''} title="Переместить вправо">→</button></div></div>${t.status==='progress'?`<div class="comment-box"><div class="comments">${comments.length?comments.map(c=>`<div class="comment">${escapeHtml(c)}</div>`).join(''):'<div class="comment">Добавьте первую заметку к задаче.</div>'}</div><form class="comment-form"><input maxlength="300" placeholder="Новая заметка..." aria-label="Новая заметка"><button title="Сохранить">↗</button></form></div>`:''}</div>`; }
+    function bindCardEvents(){ document.querySelectorAll('.task').forEach(card=>{const id=card.dataset.id;card.addEventListener('dragstart',()=>{draggedId=id;card.classList.add('dragging')});card.addEventListener('dragend',()=>{draggedId=null;card.classList.remove('dragging')});card.querySelector('.delete').onclick=()=>{if(confirm('Удалить задачу?')){tasks=tasks.filter(t=>t.id!==id);save();render();}};card.querySelector('.toggle-active').onclick=()=>{const t=tasks.find(x=>x.id===id);t.active=!t.active;save();render();};card.querySelector('.prev').onclick=()=>moveTask(id,-1);card.querySelector('.next').onclick=()=>moveTask(id,1);const form=card.querySelector('.comment-form');if(form)form.onsubmit=e=>{e.preventDefault();const input=form.querySelector('input');if(input.value.trim()){const t=tasks.find(x=>x.id===id);t.comments=t.comments||[];t.comments.push(input.value.trim());save();render();}};}); }
+    function moveTask(id,direction){const t=tasks.find(x=>x.id===id);const states=['todo','progress','done'];moveTo(t,states[states.indexOf(t.status)+direction]);}
+    function moveTo(task,status){if(!task||!status||task.status===status)return;const wasDone=task.status==='done';task.status=status;save();render();if(status==='done'&&!wasDone){celebrate();toast('Задача завершена — отличный результат!');}}
+    function celebrate(){confetti({particleCount:130,spread:80,origin:{y:.62},colors:['#6857e8','#3677ed','#21a778','#f4a940','#ff6f91']});setTimeout(()=>confetti({particleCount:55,angle:60,spread:55,origin:{x:0}}),180);setTimeout(()=>confetti({particleCount:55,angle:120,spread:55,origin:{x:1}}),300);}
+    function toast(text){const el=$('#toast');el.textContent=text;el.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('show'),2800);}
+    document.querySelectorAll('.column').forEach(col=>{col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('over')});col.addEventListener('dragleave',e=>{if(!col.contains(e.relatedTarget))col.classList.remove('over')});col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('over');moveTo(tasks.find(t=>t.id===draggedId),col.dataset.status);});});
+    const dialog=$('#taskDialog'); $('#openModal').onclick=()=>dialog.showModal(); ['#closeModal','#cancelModal'].forEach(s=>$(s).onclick=()=>dialog.close());
+    $('#taskForm').onsubmit=e=>{e.preventDefault();tasks.unshift({id:crypto.randomUUID(),title:$('#title').value.trim(),description:$('#description').value.trim(),deadline:$('#deadline').value,status:'todo',active:$('#isActive').checked,comments:[]});save();render();e.target.reset();$('#isActive').checked=true;dialog.close();toast('Новая задача добавлена');};
+    async function checkDeadlines(){
+      const candidates=tasks.filter(t=>t.status!=='done'&&t.deadline&&[1,2].includes(dateInfo(t.deadline).days));
+      if(!candidates.length||EMAILJS_PUBLIC_KEY.startsWith('YOUR_')) return;
+      emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+      const sent=JSON.parse(localStorage.getItem('kanban-reminders-sent')||'{}');const today=new Date().toISOString().slice(0,10);
+      for(const t of candidates){const key=`${t.id}-${today}`;if(sent[key])continue;try{await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:REMINDER_EMAIL,task_title:t.title,deadline:t.deadline,days_left:dateInfo(t.deadline).days});sent[key]=true;localStorage.setItem('kanban-reminders-sent',JSON.stringify(sent));}catch(err){console.error('EmailJS reminder failed:',err);}}
     }
-
-    function formatDate(date) {
-      return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(new Date(date + "T12:00:00"));
-    }
-
-    function dueTag(t) {
-      if (!t.dueDate) return "";
-      const days = daysLeft(t.dueDate);
-      if (t.status !== "done" && days < 0) return `<span class="tag late">⚠ Просрочено</span>`;
-      if (t.status !== "done" && days === 0) return `<span class="tag late">⚠ Дедлайн сегодня</span>`;
-      if (t.status !== "done" && [1,2].includes(days)) return `<span class="tag soon">⏳ Осталось ${days} ${days === 1 ? "день" : "дня"}</span>`;
-      return `<span class="tag date">📅 ${formatDate(t.dueDate)}</span>`;
-    }
-
-    function render() {
-      Object.entries(columns).forEach(([status,[listId,countId,empty]]) => {
-        const tasks = state.tasks.filter(t => t.status === status);
-        document.getElementById(countId).textContent = tasks.length;
-        document.getElementById(listId).innerHTML = tasks.length ? tasks.map(t => `
-          <article class="card ${t.active ? "" : "inactive"}" draggable="true" data-id="${t.id}">
-            <div class="body">
-              <h3>${escapeHtml(t.title)}</h3>
-              ${t.description ? `<p class="desc">${escapeHtml(t.description)}</p>` : ""}
-              <div class="tags">
-                <span class="tag ${t.active ? "ok" : "off"}">${t.active ? "● Актуально" : "○ Неактуально"}</span>
-                ${dueTag(t)}
-              </div>
-            </div>
-            <div class="foot">
-              <button class="comment-btn" data-comments="${t.id}">💬 Заметки (${t.comments.length})</button>
-              <div class="actions">
-                <button class="icon" data-edit="${t.id}" title="Редактировать">✎</button>
-                <button class="icon" data-delete="${t.id}" title="Удалить">⌫</button>
-              </div>
-            </div>
-          </article>
-        `).join("") : `<div class="empty">${empty}</div>`;
-      });
-      document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("dragstart", e => {
-          draggedId = card.dataset.id;
-          card.classList.add("dragging");
-          e.dataTransfer.setData("text/plain", draggedId);
-        });
-        card.addEventListener("dragend", () => card.classList.remove("dragging"));
-      });
-    }
-
-    function openTask(t = null) {
-      taskModal.classList.add("open");
-      taskTitleModal.textContent = t ? "Редактировать задачу" : "Новая задача";
-      id.value = t?.id || ""; title.value = t?.title || ""; description.value = t?.description || "";
-      dueDate.value = t?.dueDate || ""; status.value = t?.status || "todo"; active.checked = t ? t.active !== false : true;
-    }
-
-    function fireworks() {
-      const until = Date.now() + 1800;
-      (function launch() {
-        confetti({particleCount:65,spread:76,startVelocity:42,origin:{x:.1 + Math.random()*.8,y:.25 + Math.random()*.35},colors:["#f43f5e","#f59e0b","#22c55e","#38bdf8","#a78bfa","#fff"]});
-        if (Date.now() < until) requestAnimationFrame(launch);
-      })();
-      showNotice("🎉 Задача завершена!");
-    }
-
-    function showNotice(text) {
-      notice.textContent = text; notice.classList.add("show");
-      clearTimeout(showNotice.timer);
-      showNotice.timer = setTimeout(() => notice.classList.remove("show"), 3000);
-    }
-
-    function openComments(id) {
-      const t = task(id); if (!t) return;
-      commentsId = id; commentsTitle.textContent = "Заметки: " + t.title;
-      renderComments(t); commentsModal.classList.add("open");
-    }
-
-    function renderComments(t) {
-      commentList.innerHTML = t.comments.length ? t.comments.map(c => `
-        <article class="comment"><p>${escapeHtml(c.text)}</p>
-          <time>${new Intl.DateTimeFormat("ru-RU",{dateStyle:"medium",timeStyle:"short"}).format(new Date(c.createdAt))}</time>
-        </article>`).join("") : `<div class="empty">Заметок пока нет.</div>`;
-    }
-
-    function emailConfigured() {
-      return ![PUBLIC_KEY,SERVICE_ID,TEMPLATE_ID].some(v => v.startsWith("YOUR_"));
-    }
-
-    async function checkEmails() {
-      if (!emailConfigured()) return;
-      emailjs.init(PUBLIC_KEY);
-
-      for (const t of state.tasks) {
-        const days = t.dueDate ? daysLeft(t.dueDate) : null;
-        if (!t.active || t.status === "done" || ![1,2].includes(days)) continue;
-
-        const notificationKey = `${t.dueDate}-${days}`;
-        if (t.notifications[notificationKey]) continue;
-
-        try {
-          await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-            to_email: RECIPIENT,
-            task_title: t.title,
-            task_description: t.description || "Без описания",
-            due_date: formatDate(t.dueDate),
-            days_remaining: days
-          });
-          t.notifications[notificationKey] = new Date().toISOString();
-          save();
-        } catch (error) {
-          console.error("EmailJS error:", error);
-        }
-      }
-    }
-
-    newTask.addEventListener("click", () => openTask());
-
-    taskForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const old = task(id.value);
-      const data = {title:title.value.trim(),description:description.value.trim(),dueDate:dueDate.value,status:status.value,active:active.checked};
-
-      if (!data.title) return;
-      const completed = old && old.status !== "done" && data.status === "done";
-
-      if (old) Object.assign(old, data);
-      else state.tasks.unshift({id:uid(),...data,comments:[],notifications:{},createdAt:new Date().toISOString()});
-
-      save(); render(); taskModal.classList.remove("open");
-      if (completed) fireworks();
-      checkEmails();
-    });
-
-    commentForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const t = task(commentsId), text = commentText.value.trim();
-      if (!t || !text) return;
-      t.comments.push({id:uid(),text,createdAt:new Date().toISOString()});
-      save(); renderComments(t); render(); commentText.value = "";
-    });
-
-    document.addEventListener("click", e => {
-      const button = e.target.closest("button");
-      if (!button) return;
-      if (button.dataset.close) document.getElementById(button.dataset.close).classList.remove("open");
-      if (button.dataset.comments) openComments(button.dataset.comments);
-      if (button.dataset.edit) openTask(task(button.dataset.edit));
-      if (button.dataset.delete) {
-        const t = task(button.dataset.delete);
-        if (t && confirm(`Удалить задачу «${t.title}»?`)) {
-          state.tasks = state.tasks.filter(x => x.id !== t.id);
-          save(); render();
-        }
-      }
-    });
-
-    document.querySelectorAll(".column").forEach(column => {
-      column.addEventListener("dragover", e => { e.preventDefault(); column.classList.add("drag"); });
-      column.addEventListener("dragleave", () => column.classList.remove("drag"));
-      column.addEventListener("drop", e => {
-        e.preventDefault(); column.classList.remove("drag");
-        const t = task(e.dataTransfer.getData("text/plain") || draggedId);
-        if (!t || t.status === column.dataset.status) return;
-        const completed = column.dataset.status === "done" && t.status !== "done";
-        t.status = column.dataset.status;
-        save(); render();
-        if (completed) fireworks();
-      });
-    });
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(m => m.classList.remove("open"));
-    });
-
-    render();
-    checkEmails();
+    render(); checkDeadlines(); setInterval(checkDeadlines,60*60*1000);
   </script>
 </body>
 </html>
